@@ -1,7 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Style from "./Home.module.css"
 import { getNetworkData, connectWallet } from '../../utils/connectionFunctions'
 import { MyContext } from '../Context/Context'
+import Error from '../Error/Error';
 
 const Home = () => {
 
@@ -12,10 +14,13 @@ const Home = () => {
     const [transferAmount, setTransferAmount] = useState()
     const [transferAccount, setTransferAccount] = useState()
 
-    const { increaseAllowance, getBalance , transferToken } = useContext(MyContext)
+    const { increaseAllowance, getBalance, transferToken } = useContext(MyContext)
 
     const fetchData = async () => {
         const account = await connectWallet();
+        if (!account) {
+            setError("Connect Metamask")
+        }
         const info = await getNetworkData();
         const bal = await getBalance();
         setBalance(bal)
@@ -29,7 +34,7 @@ const Home = () => {
     const handleTransfer = async (e) => {
         e.preventDefault();
         console.log("Form Submit", transferAccount, transferAmount);
-        await transferToken(transferAccount , transferAmount)
+        await transferToken(transferAccount, transferAmount)
     }
 
     useEffect(() => {
@@ -38,6 +43,9 @@ const Home = () => {
 
     return (
         <div>
+
+            {error == null ? "" : <Error error={error} />}
+
             <div className={Style.container}>
                 {data && (
                     <>
@@ -69,6 +77,7 @@ const Home = () => {
                     <button type="submit" value="submit">Transfer</button>
                 </form>
             </div>
+
         </div>
     )
 }

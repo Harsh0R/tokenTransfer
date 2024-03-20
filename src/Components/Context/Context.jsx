@@ -32,7 +32,7 @@ export const MyContextProvider = ({ children }) => {
                 setError("Error occure in fetching TokenContract ....😑 : TokenAddress or myTokenABI is not define");
             }
         } catch (error) {
-            setError("Error occure in fetching data ....😑" + error);
+            setError("Error occure in fetching data ....😑 : Connect Metamast ");
         }
     };
 
