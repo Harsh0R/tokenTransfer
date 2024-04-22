@@ -10,7 +10,7 @@ import {
   RainbowKitProvider,
   darkTheme,
 } from "@rainbow-me/rainbowkit";
-import { polygonMumbai } from 'wagmi/chains'
+import { polygonAmoy } from 'wagmi/chains'
 import { WagmiProvider , http  } from 'wagmi'
 import { getDefaultConfig } from '@rainbow-me/rainbowkit'
 
@@ -19,9 +19,9 @@ function App() {
   const config = getDefaultConfig({
     appName: 'RainbowKit demo',
     projectId: 'YOUR_PROJECT_ID',
-    chains: [polygonMumbai],
+    chains: [polygonAmoy],
     transports: {
-      [polygonMumbai.id]: http(),
+      [polygonAmoy.id]: http(),
     },
   })
  
@@ -44,3 +44,9 @@ function App() {
 }
 
 export default App
+
+
+
+
+// "@rainbow-me/rainbowkit": "^0.4.6",
+// "wagmi": "^2.5.11",
