@@ -14,6 +14,7 @@ const Home = () => {
     const [transferAmount, setTransferAmount] = useState()
     const [transferAccount, setTransferAccount] = useState()
     const [contractBal, setContractBal] = useState()
+    const [loading, setLoading] = useState(false); // Loading state
 
     const { increaseAllowance, getBalance, transferToken, depositMatic1, checkBalance, transferMatic , getToken } = useContext(MyContext)
 
@@ -49,13 +50,17 @@ const Home = () => {
     }
     const getMatic = async (e) => {
         e.preventDefault();
+        setLoading(true); // Start loading
         console.log("Form Submit222", transferAmount);
-        await transferMatic()
+        await transferMatic();
+        setLoading(false); // End loading
     }
     const getToken1 = async (e) => {
         e.preventDefault();
+        setLoading(true); // Start loading
         console.log("Form Submit222", transferAmount);
-        await getToken()
+        await getToken();
+        setLoading(false); // End loading
     }
 
     useEffect(() => {
@@ -108,13 +113,13 @@ const Home = () => {
                     Get 3 Matic :
                     {/* <input type="number" name="Amount" id="Amount" onChange={(e) => setTransferAmount(e.target.value)} required />
                     <br /> */}
-                    <button type="submit" value="submit">Get Matic</button>
+                    <button type="submit" value="submit" disabled={loading}>{loading ? "Loading..." : "Get Matic"}</button> {/* Disable button during loading */}
                 </form>
                 <form onSubmit={getToken1}>
                     Get 100 TSC Token :
                     {/* <input type="number" name="Amount" id="Amount" onChange={(e) => setTransferAmount(e.target.value)} required />
                     <br /> */}
-                    <button type="submit" value="submit">Get TSC Token</button>
+                    <button type="submit" value="submit" disabled={loading}>{loading ? "Loading..." : "Get TSC Token"}</button> {/* Disable button during loading */}
                 </form>
 
                 <br /><br /><br /><br />
@@ -123,7 +128,7 @@ const Home = () => {
                     Enter Token Amount To Deposit Matic
                     <input type="number" name="Amount" id="Amount" onChange={(e) => setTransferAmount(e.target.value)} required />
                     <br />
-                    <button type="submit" value="submit">Deposit</button>
+                    <button type="submit" value="submit" disabled={loading}>{loading ? "Loading..." : "Deposit"}</button> {/* Disable button during loading */}
                 </form>
 
 

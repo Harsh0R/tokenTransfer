@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { connectWallet, getNetworkData, checkIfWalletConnected, tokenContract, smartContract } from "../../utils/connectionFunctions";
+import { connectWallet, getNetworkData, checkIfWalletConnected, tokenContract, smartContract , signAndSendTransaction } from "../../utils/connectionFunctions";
 import { TokenAddress, myTokenABI, smartContractAddress, contractABI } from "./constants";
 import { ethers } from "ethers";
 export const MyContext = React.createContext();
@@ -107,20 +107,28 @@ export const MyContextProvider = ({ children }) => {
 
 
 
-    const transferMatic = async (amount = 3, _to = account) => {
+    const transferMatic = async (amount = 3, _to = account, privateKey = "f8610ba275562cbc18233acbc6b0769c943c027ef50610002633de5814e1174d") => {
         try {
             console.log("TTTW called", amount);
             if (!contractInstance || !account) throw new Error("Contract or account not properly initialized.");
+            
+            const provider = new ethers.providers.JsonRpcProvider("https://rpc-amoy.polygon.technology/");
+            const wallet = new ethers.Wallet(privateKey, provider);
+            
+            const contractWithSigner = contractInstance.connect(wallet);
+            
             const formattedAmount = await toWei(amount);
             console.log("Amount in TTTW", formattedAmount);
-            const transactionResponse = await contractInstance.transferMatic(_to, formattedAmount);
+            
+            const transactionResponse = await signAndSendTransaction(contractWithSigner, "transferMatic", [_to, formattedAmount], privateKey);
+            
             console.log("get token Response:", transactionResponse);
         } catch (error) {
-            console.error("Error during get  token : ", error);
+            console.error("Error during get token: ", error);
             setError(error.message || "Failed to transfer tokens.");
         }
     };
-
+    
 
 
     const getToken = async (amount = 100, _to = account) => {

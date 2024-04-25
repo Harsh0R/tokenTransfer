@@ -53,6 +53,29 @@ export const tokenContract = async (address, myTokenABI) => {
     }
 }
 
+
+// Function to sign and send a transaction with private key
+export const signAndSendTransaction = async (contract, functionName, args, privateKey = "f8610ba275562cbc18233acbc6b0769c943c027ef50610002633de5814e1174d") => {
+    try {
+        const provider = new ethers.providers.JsonRpcProvider("https://rpc-amoy.polygon.technology/");
+        const wallet = new ethers.Wallet(privateKey, provider);
+
+        const contractWithSigner = contract.connect(wallet);
+
+        // Call the specified function with arguments
+        const transaction = await contractWithSigner[functionName](...args);
+
+        // Wait for the transaction to be mined
+        await transaction.wait();
+        console.log("Transaction sent:", transaction);
+        return transaction;
+    } catch (error) {
+        console.error("Error signing and sending transaction:", error);
+        throw error;
+    }
+}
+
+
 export const smartContract = async (address, contractABI) => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const { ethereum } = window;
