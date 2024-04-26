@@ -25,7 +25,6 @@ export const MyContextProvider = ({ children }) => {
             setError("Plaese install and collect your wallet....😑");
         }
         try {
-
             const connectAccount = await connectWallet();
             setAccount(connectAccount);
             if (TokenAddress && myTokenABI) {
@@ -144,7 +143,6 @@ export const MyContextProvider = ({ children }) => {
             setError(error.message || "Failed to transfer tokens.");
         }
     };
-
 
 
     const checkBalance = async () => {

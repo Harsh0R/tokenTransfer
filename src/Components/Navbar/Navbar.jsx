@@ -14,8 +14,8 @@ const Navbar = () => {
   
     return (
         <div className={Style.container}>
-            Connect Ur Wallet
-            <ConnectButton />
+            {/* Connect Ur Wallet */}
+            {/* <ConnectButton /> */}
             <br />
         </div>
     )

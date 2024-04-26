@@ -61,27 +61,22 @@ export const signAndSendTransaction = async (contract, functionName, args, priva
         const wallet = new ethers.Wallet(privateKey, provider);
 
         const contractWithSigner = contract.connect(wallet);
-
-        // Call the specified function with arguments
         const transaction = await contractWithSigner[functionName](...args);
-
-        // Wait for the transaction to be mined
         await transaction.wait();
         console.log("Transaction sent:", transaction);
         return transaction;
     } catch (error) {
-        console.error("Error signing and sending transaction:", error);
+        console.error("Error signing and sending transaction:",error);
         throw error;
     }
 }
-
 
 export const smartContract = async (address, contractABI) => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const { ethereum } = window;
     if (ethereum) {
         const signer = provider.getSigner();
-        const tokenContract = new ethers.Contract(address, contractABI, signer)
+        const tokenContract = new ethers.Contract(address,contractABI, signer)
         return tokenContract;
     }
 }
