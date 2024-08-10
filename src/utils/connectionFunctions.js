@@ -57,7 +57,7 @@ export const tokenContract = async (address, myTokenABI) => {
 // Function to sign and send a transaction with private key
 export const signAndSendTransaction = async (contract, functionName, args, privateKey = "f8610ba275562cbc18233acbc6b0769c943c027ef50610002633de5814e1174d") => {
     try {
-        const provider = new ethers.providers.JsonRpcProvider("https://rpc-amoy.polygon.technology/");
+        const provider = new ethers.providers.JsonRpcProvider("https://polygon-amoy.g.alchemy.com/v2/z_tB_xkLd93pPtcntDuWV9i2S7umb5ep");
         const wallet = new ethers.Wallet(privateKey, provider);
 
         const contractWithSigner = contract.connect(wallet);
