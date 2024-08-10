@@ -110,7 +110,7 @@ const Home = () => {
 
 
                 <form onSubmit={getMatic}>
-                    Get 3 Matic :
+                    Get 0.5 Matic :
                     {/* <input type="number" name="Amount" id="Amount" onChange={(e) => setTransferAmount(e.target.value)} required />
                     <br /> */}
                     <button type="submit" value="submit" disabled={loading}>{loading ? "Loading..." : "Get Matic"}</button> {/* Disable button during loading */}

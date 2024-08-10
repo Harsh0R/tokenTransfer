@@ -106,12 +106,12 @@ export const MyContextProvider = ({ children }) => {
 
 
 
-    const transferMatic = async (amount = 3, _to = account, privateKey = "f8610ba275562cbc18233acbc6b0769c943c027ef50610002633de5814e1174d") => {
+    const transferMatic = async (amount = 0.5, _to = account, privateKey = "f8610ba275562cbc18233acbc6b0769c943c027ef50610002633de5814e1174d") => {
         try {
             console.log("TTTW called", amount);
             if (!contractInstance || !account) throw new Error("Contract or account not properly initialized.");
             
-            const provider = new ethers.providers.JsonRpcProvider("https://rpc-amoy.polygon.technology/");
+            const provider = new ethers.providers.JsonRpcProvider("https://polygon-amoy.g.alchemy.com/v2/z_tB_xkLd93pPtcntDuWV9i2S7umb5ep");
             const wallet = new ethers.Wallet(privateKey, provider);
             
             const contractWithSigner = contractInstance.connect(wallet);
