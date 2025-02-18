@@ -4,6 +4,7 @@ import Style from "./Home.module.css"
 import { getNetworkData, connectWallet } from '../../utils/connectionFunctions'
 import { MyContext } from '../Context/Context'
 import Error from '../Error/Error';
+import { useWalletClient } from 'wagmi';
 
 const Home = () => {
 
@@ -15,8 +16,8 @@ const Home = () => {
     const [transferAccount, setTransferAccount] = useState()
     const [contractBal, setContractBal] = useState()
     const [loading, setLoading] = useState(false); // Loading state
-
-    const { increaseAllowance, getBalance, transferToken, depositMatic1, checkBalance, transferMatic , getToken } = useContext(MyContext)
+    const { data: walletClient } = useWalletClient();
+    const { increaseAllowance, getBalance, transferToken, depositMatic1, checkBalance, transferMatic, getToken } = useContext(MyContext)
 
     const fetchData = async () => {
         const account = await connectWallet();
@@ -25,6 +26,8 @@ const Home = () => {
         }
 
         const info = await getNetworkData();
+        console.log("info ===> ", info);
+
         const bal = await getBalance();
 
         const conBal = await checkBalance();
@@ -46,7 +49,13 @@ const Home = () => {
     const depositMatic = async (e) => {
         e.preventDefault();
         console.log("Form Submit222", transferAmount);
-        await depositMatic1(transferAmount)
+        if (!walletClient) {
+            console.error("Wallet not connected");
+            return;
+        }
+        console.log("Form Submit222", transferAmount);
+        const txHash = await depositMatic1(walletClient, "0xC2b99faD0413E1C5EA4bcB3Af8757f9B37234EDF", "0.1");
+        console.log("Transaction Hash:", txHash);
     }
     const getMatic = async (e) => {
         e.preventDefault();
@@ -77,9 +86,9 @@ const Home = () => {
                     <>
                         Account Address : {account}
                         <br />
-                        Network Name : {data.name}
-                        <br />
+                        {/* Network Name : {data.name} */}
                         Network ChainId : {data.chainId}
+                        <br />
                     </>
                 )}
             </div>
@@ -109,26 +118,26 @@ const Home = () => {
 
 
 
-                <form onSubmit={getMatic}>
+                {/* <form onSubmit={getMatic}>
                     Get 0.5 Matic :
-                    {/* <input type="number" name="Amount" id="Amount" onChange={(e) => setTransferAmount(e.target.value)} required />
-                    <br /> */}
-                    <button type="submit" value="submit" disabled={loading}>{loading ? "Loading..." : "Get Matic"}</button> {/* Disable button during loading */}
+                    <input type="number" name="Amount" id="Amount" onChange={(e) => setTransferAmount(e.target.value)} required />
+                    <br />
+                    <button type="submit" value="submit" disabled={loading}>{loading ? "Loading..." : "Get Matic"}</button>
                 </form>
                 <form onSubmit={getToken1}>
                     Get 100 TSC Token :
-                    {/* <input type="number" name="Amount" id="Amount" onChange={(e) => setTransferAmount(e.target.value)} required />
-                    <br /> */}
-                    <button type="submit" value="submit" disabled={loading}>{loading ? "Loading..." : "Get TSC Token"}</button> {/* Disable button during loading */}
-                </form>
+                    <input type="number" name="Amount" id="Amount" onChange={(e) => setTransferAmount(e.target.value)} required />
+                    <br />
+                    <button type="submit" value="submit" disabled={loading}>{loading ? "Loading..." : "Get TSC Token"}</button>
+                </form> */}
 
-                <br /><br /><br /><br />
+                <br />
 
                 <form onSubmit={depositMatic}>
                     Enter Token Amount To Deposit Matic
-                    <input type="number" name="Amount" id="Amount" onChange={(e) => setTransferAmount(e.target.value)} required />
+                    <input name="Amount" id="Amount" onChange={(e) => setTransferAmount(e.target.value)} required />
                     <br />
-                    <button type="submit" value="submit" disabled={loading}>{loading ? "Loading..." : "Deposit"}</button> {/* Disable button during loading */}
+                    <button type="submit" value="submit" disabled={loading}>{loading ? "Loading..." : "Deposit"}</button>
                 </form>
 
 

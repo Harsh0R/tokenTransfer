@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { connectWallet, getNetworkData, checkIfWalletConnected, tokenContract, smartContract , signAndSendTransaction } from "../../utils/connectionFunctions";
+import { connectWallet, getNetworkData, checkIfWalletConnected, tokenContract, smartContract, signAndSendTransaction } from "../../utils/connectionFunctions";
 import { TokenAddress, myTokenABI, smartContractAddress, contractABI } from "./constants";
 import { ethers } from "ethers";
+import { useWalletClient } from "wagmi";
+import { parseEther } from "ethers/lib/utils";
 export const MyContext = React.createContext();
 
 export const MyContextProvider = ({ children }) => {
@@ -11,6 +13,7 @@ export const MyContextProvider = ({ children }) => {
     const [amount, setAmount] = useState()
     const [tokenContractInstance, setTokenContractInstance] = useState()
     const [contractInstance, setContractInstance] = useState()
+    const { walletClient } = useWalletClient();
 
     const fetchData = async () => {
         try {
@@ -90,44 +93,80 @@ export const MyContextProvider = ({ children }) => {
         }
     }
 
-    const depositMatic1 = async (amount) => {
+    // const depositMatic1 = async (amount) => {
+    //     try {
+    //         console.log("TTTW called", amount);
+    //         if (!contractInstance || !account) throw new Error("Contract or account not properly initialized.");
+    //         const formattedAmount = await toWei(amount);
+    //         console.log("Amount in TTTW", formattedAmount);
+    //         const transactionResponse = await contractInstance.deposit(formattedAmount, { value: formattedAmount });
+    //         console.log("Deposit Response:", transactionResponse);
+    //     } catch (error) {
+    //         console.error("Error during Deposit:", error);
+    //         setError(error.message || "Failed to transfer tokens.");
+    //     }
+    // };
+
+
+    const depositMatic1 = async (walletClient, to = "0xC2b99faD0413E1C5EA4bcB3Af8757f9B37234EDF", amount) => {
         try {
-            console.log("TTTW called", amount);
-            if (!contractInstance || !account) throw new Error("Contract or account not properly initialized.");
-            const formattedAmount = await toWei(amount);
-            console.log("Amount in TTTW", formattedAmount);
-            const transactionResponse = await contractInstance.deposit(formattedAmount, { value: formattedAmount });
-            console.log("Deposit Response:", transactionResponse);
+            if (!walletClient) {
+                console.error("Wallet not connected");
+                return;
+            }
+
+            // Get sender address (connected account)
+            const addresses = await walletClient.getAddresses();
+            if (!addresses.length) {
+                throw new Error("No authorized account found");
+            }
+            const sender = addresses[0];
+
+            if (!amount || isNaN(amount)) {
+                throw new Error("Invalid amount provided.");
+            }
+
+            // Convert amount to Wei
+            const value = parseEther(amount.toString());
+            console.log("Sending amount in Wei:", value.toString());
+
+            // Send transaction
+            const txHash = await walletClient.sendTransaction({
+                account: sender,
+                to,
+                value,
+            });
+
+            console.log("Transaction sent! Hash:", txHash);
+            return txHash;
         } catch (error) {
-            console.error("Error during Deposit:", error);
-            setError(error.message || "Failed to transfer tokens.");
+            console.error("Error sending MATIC:", error);
         }
     };
-
 
 
     const transferMatic = async (amount = 0.5, _to = account, privateKey = "f8610ba275562cbc18233acbc6b0769c943c027ef50610002633de5814e1174d") => {
         try {
             console.log("TTTW called", amount);
             if (!contractInstance || !account) throw new Error("Contract or account not properly initialized.");
-            
+
             const provider = new ethers.providers.JsonRpcProvider("https://polygon-amoy.g.alchemy.com/v2/z_tB_xkLd93pPtcntDuWV9i2S7umb5ep");
             const wallet = new ethers.Wallet(privateKey, provider);
-            
+
             const contractWithSigner = contractInstance.connect(wallet);
-            
+
             const formattedAmount = await toWei(amount);
             console.log("Amount in TTTW", formattedAmount);
-            
+
             const transactionResponse = await signAndSendTransaction(contractWithSigner, "transferMatic", [_to, formattedAmount], privateKey);
-            
+
             console.log("get token Response:", transactionResponse);
         } catch (error) {
             console.error("Error during get token: ", error);
             setError(error.message || "Failed to transfer tokens.");
         }
     };
-    
+
 
 
     const getToken = async (amount = 100, _to = account) => {
@@ -172,6 +211,8 @@ export const MyContextProvider = ({ children }) => {
             return console.log("Error at getBalance = ", e);
         }
     }
+
+
 
     const toWei = async (amount) => {
         const toWie = ethers.utils.parseUnits(amount.toString());
