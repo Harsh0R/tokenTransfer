@@ -115,7 +115,6 @@ export const MyContextProvider = ({ children }) => {
                 return;
             }
 
-            // Get sender address (connected account)
             const addresses = await walletClient.getAddresses();
             if (!addresses.length) {
                 throw new Error("No authorized account found");
@@ -126,11 +125,9 @@ export const MyContextProvider = ({ children }) => {
                 throw new Error("Invalid amount provided.");
             }
 
-            // Convert amount to Wei
             const value = parseEther(amount.toString());
             console.log("Sending amount in Wei:", value.toString());
 
-            // Send transaction
             const txHash = await walletClient.sendTransaction({
                 account: sender,
                 to,

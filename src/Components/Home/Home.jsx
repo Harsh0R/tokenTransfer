@@ -15,7 +15,7 @@ const Home = () => {
     const [transferAmount, setTransferAmount] = useState()
     const [transferAccount, setTransferAccount] = useState()
     const [contractBal, setContractBal] = useState()
-    const [loading, setLoading] = useState(false); // Loading state
+    const [loading, setLoading] = useState(false);
     const { data: walletClient } = useWalletClient();
     const { increaseAllowance, getBalance, transferToken, depositMatic1, checkBalance, transferMatic, getToken } = useContext(MyContext)
 
